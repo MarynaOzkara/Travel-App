@@ -12,13 +12,13 @@ const WelcomeScreen = () => {
        <StatusBar style='light'/>
         <View className="h-full">
             <View className='w-full px-4 items-center my-8'>
-                <Animated.View entering={FadeInDown.duration(200).springify()} className='flex-row justify-center items-center pb-24'>
+                <Animated.View entering={FadeInDown.duration(200).springify()} className='flex-row justify-center items-center pb-20'>
                     <MaterialCommunityIcons name="airplane" size={24} color="#2B6CB0"/>
                     <Text className='text-white text-xl font-semibold leading-[60px] pl-1 uppercase'>MakeYour</Text>
                     <Text className='text-[#2B6CB0] text-xl font-bold leading-[60px] uppercase italic'>travel</Text>
                 </Animated.View>
                 <Animated.View entering={FadeInDown.duration(200).delay(200).springify()}>
-                    <Text className='text-[#2D3748] text-[52px] font-medium leading-[60px]'>Discover your Dream Travel Easily</Text>
+                    <Text className='text-[#2D3748] text-[46px] font-medium leading-[58px]'>Discover your Dream Travel Easily</Text>
                 </Animated.View>
                 <Animated.View className='mt-4' entering={FadeInDown.duration(200).delay(400).springify()}>
                     <Text className='text-[#4A5568] text-ld font-medium leading-[20px]'>Find an easy way to buy airplane tickets and hotels with just a few clicks in the application.</Text>
