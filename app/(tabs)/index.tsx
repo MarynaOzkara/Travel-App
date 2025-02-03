@@ -1,8 +1,11 @@
 import Header from '@/components/Header';
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { StyleSheet,Text, View, ActivityIndicator, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet,Text, View, ActivityIndicator, Pressable, TextInput } from 'react-native';
 import {ArrowPathRoundedSquareIcon, ChevronDoubleRightIcon} from 'react-native-heroicons/outline';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 
 
 
@@ -10,6 +13,61 @@ interface TripOptionProps {
   pageNavigation: string;
   handleNavigationChange: (type: string)=> void;
 }
+interface LocationInputProps {
+  placeholder: string;
+  icon: React.ReactNode;
+  value: string;
+  onPress: () => void;
+}
+interface SearchFlightData {
+    originCity: string;
+    destinationCity: string;
+    depatureDate: string;
+    seat: number;
+}
+interface DepatureDateProps {
+  placeholder: string;
+  icon: React.ReactNode;
+  value: string;
+  onPress: () => void;
+}
+interface FlightOfferData{
+    originLocationCode: string;
+    destinationLocationCode: string;
+    depatureDate: Date;
+    returnDate: Date;
+    adults: number;
+    maxResults: number
+}
+const DepatureDate: React.FC<DepatureDateProps> = ({placeholder, icon, value, onPress}) =>(
+  
+     <Pressable onPress={onPress} className='border-2 border-gray-300 mx-4 mb-4 rounded-2xl justify-center py-4'>
+        <View className='px-4 flex-row justify-between items-center'>
+          <View className='w-[15%] border-r-2 border-gray-300'>{icon}</View>
+          <View className='w-[80%] px-4 justify-start items-start'>
+            {value || placeholder}
+          </View>
+        </View>
+     </Pressable>
+ 
+)
+
+const LocationInput: React.FC<LocationInputProps> = ({placeholder, icon, value, onPress}) =>(
+  <View className='border-2 border-gray-300 mx-4 mb-4 rounded-2xl justify-center'>
+     <Pressable onPress={onPress}>
+        <View className='px-4 flex-row justify-between items-center'>
+          <View className='w-[15%] border-r-2 border-gray-300'>{icon}</View>
+          <View className='w-[80%] py-3'>
+            {value ? (
+              <Text className='bg-transparent text-gray-600 font-bold'>{value}</Text>
+            ) : (
+              <Text className='bg-transparent text-lg text-gray-600 font-semibold'>{placeholder}</Text>
+            )}
+          </View>
+        </View>
+     </Pressable>
+  </View>
+)
 
 const TripOption: React.FC<TripOptionProps> = ({pageNavigation, handleNavigationChange})=>(
   <View className='flex-row justify-between w-full px-4 py-2'>
@@ -32,6 +90,21 @@ const TripOption: React.FC<TripOptionProps> = ({pageNavigation, handleNavigation
 export default function HomeScreen() {
   const [isPending, setIsPending] = useState(false);
   const [pageNavigation, setPageNavigation] = useState('oneWay');
+  const [flightOfferData, setFlightOfferData] = useState<FlightOfferData>({
+    originLocationCode: '',
+    destinationLocationCode: '',
+    depatureDate: new Date(),
+    returnDate: new Date(),
+    adults: 0,
+    maxResults: 10
+  })
+  const [searchFlightData, setSearchFlightData] = useState<SearchFlightData>({
+    originCity: '',
+    destinationCity: '',
+    depatureDate: '',
+    seat: 0
+  })
+  const [selectedDate, setSelectedDate] = useState<any>(new Date())
   const handleNavigationChange = (type: string)=> setPageNavigation(type)
   
   return (
@@ -56,7 +129,50 @@ export default function HomeScreen() {
           <View className='flex-row justify-between w-full px-4 py-2'>
             <TripOption pageNavigation={pageNavigation} handleNavigationChange={handleNavigationChange}/>
           </View>
-        </View>
+           {/* Origin City */}
+              <LocationInput 
+                  placeholder={searchFlightData.originCity ? searchFlightData.originCity : "Depature"} 
+                  icon={<FontAwesome5 name="plane-departure" size={20} color="gray" />} 
+                  value={searchFlightData.originCity} 
+                  onPress={()=>{}}/>
+            {/*Destination City  */}
+              <LocationInput 
+                  placeholder={searchFlightData.destinationCity ? searchFlightData.destinationCity : "Destination"} 
+                  icon={<FontAwesome5 name="plane-arrival" size={20} color="gray" />} 
+                  value={searchFlightData.destinationCity} 
+                  onPress={()=>{}}/>
+            {/*Depature Date  */}
+            <DepatureDate
+                placeholder={selectedDate && selectedDate.length > 0 ? selectedDate.replace(/^"|"$/g, "") : 'Depature Date'}
+                icon={<FontAwesome5 name="calendar-alt" size={20} color="gray" />}
+                value={searchFlightData.depatureDate.replace(/^"|"$/g, "")}
+                onPress={() =>{}}
+                />
+            {/* Seat */}
+            <View className='border-2 border-gray-300 mx-4 rounded-2xl py-3 justify-center flex-row items-center pl-4'>
+               <View className='w-[15%] border-r-2 border-gray-300'>
+                  <MaterialCommunityIcons name="seat-passenger" size={20} color="gray"/>
+               </View>
+               <TextInput
+                 className='w-[85%] text-base px-4 font-semibold text-gray-600'
+                 placeholder='Seat'
+                 keyboardType='numeric'
+                 value={String(searchFlightData.seat)}
+                 onChangeText={(text)=>{
+                  const seatValue = parseInt(text, 10);
+                  const validSeatValue = isNaN(seatValue) ? 0 : seatValue;
+                  setSearchFlightData((prev)=>({...prev, seat: validSeatValue}));
+                  setFlightOfferData((prev) =>({...prev, adults: validSeatValue}))
+                 }}
+               />
+            </View>
+            {/* Search Button */}
+            <View className='w-full justify-start pt-2 px-4 mt-2'>
+              <Pressable onPress={()=>{}} className='bg-[#3182CE] rounded-lg justify-center items-center py-3'>
+                <Text className='text-white font-bold text-lg'>Search</Text>
+              </Pressable>
+            </View>
+        </View>  
       </View>
     </View>
   );
