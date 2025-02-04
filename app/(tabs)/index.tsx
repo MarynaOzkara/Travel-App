@@ -5,6 +5,7 @@ import { StyleSheet,Text, View, ActivityIndicator, Pressable, TextInput } from '
 import {ArrowPathRoundedSquareIcon, ChevronDoubleRightIcon} from 'react-native-heroicons/outline';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { router } from 'expo-router';
 
 
 
@@ -134,7 +135,7 @@ export default function HomeScreen() {
                   placeholder={searchFlightData.originCity ? searchFlightData.originCity : "Depature"} 
                   icon={<FontAwesome5 name="plane-departure" size={20} color="gray" />} 
                   value={searchFlightData.originCity} 
-                  onPress={()=>{}}/>
+                  onPress={()=>router.push('/depature')}/>
             {/*Destination City  */}
               <LocationInput 
                   placeholder={searchFlightData.destinationCity ? searchFlightData.destinationCity : "Destination"} 

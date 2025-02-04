@@ -34,6 +34,7 @@ export default function RootLayout() {
       <Stack.Screen name="index" />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
+        <Stack.Screen name="depature"/>
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
