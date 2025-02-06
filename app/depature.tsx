@@ -1,14 +1,34 @@
 import { View, Text, Pressable, TextInput, FlatList } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router } from "expo-router";
 import {apiToken} from '../utils/api'
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 const DepatureScreen = () => {
   const [searchInput, setSearchInput] = useState('');
   const [autoCompleteResults, setAutoCompleteResults] = useState([]);
+  const [flightOfferData, setFlightOfferData] = useState<any>({
+    originLocationCode: ''
+  });
+  const [prevSelectedDepature, setPrevSelectedDepature] = useState<any>([]);
+  const loadPrevSelectedCities = async()=> {
+    try {
+      const cities = await AsyncStorage.getItem('depatureCities');
+      if(cities !== null){
+        setPrevSelectedDepature(JSON.parse(cities))
+      }
+      
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(() =>{
+    loadPrevSelectedCities()
+  },[])
   const debounce = (func: any, delay: number) =>{
     let timeoutId;
     return function (...args: any) {
@@ -35,6 +55,15 @@ const DepatureScreen = () => {
   const handleInputChange = (value: string)=>{
       setSearchInput(value);
       debounceSearch(value)
+  }
+  const handleSelectAutoComplete = async(item: any)=>{
+    const prevSelectedCities = [...prevSelectedDepature];
+    prevSelectedCities.push({city: item.name, iataCode: item.iataCode});
+    await AsyncStorage.setItem('depatureCities', JSON.stringify(prevSelectedCities));
+    setPrevSelectedDepature(prevSelectedCities)
+    setFlightOfferData({...flightOfferData, originLocationCode: item.iataCode});
+    setSearchInput(`${item.name} (${item.iataCode})`);
+    setAutoCompleteResults([]);
   }
   return (
     <View className="flex-1 items-center bg-[#f5f7fa]">
@@ -78,12 +107,30 @@ const DepatureScreen = () => {
           {autoCompleteResults.length > 0 && (
             <View className="border-2 border-gray-400 bg-white rounded-xl shadow-sm mt-4">
               <FlatList data={autoCompleteResults} keyExtractor={(item) => item.id} renderItem={({item}) => (
-                <Pressable className="px-2 py-2 rounded-xl my-1" onPress={()=>{}}>
+                <Pressable className="px-2 py-2 rounded-xl my-1" onPress={()=>handleSelectAutoComplete(item)}>
                   <Text className="text-gray-500 capitalize">{item.name}{item.iataCode}</Text>
                 </Pressable>
               )}/>
             </View>
           )}
+
+          {/* Prev Selected Cities */}
+          <View className="px-4 w-full">
+            <Text className="text-gray-500 text-lg font-bold mt-4">Previouse Selected</Text>
+              {prevSelectedDepature.map(({city, index})=>(
+                <Pressable
+                   key={index}
+                   onPress={()=>{
+                    setFlightOfferData({...flightOfferData, originLocationCode: city.iataCode});
+                    setSearchInput(`${city.city} (${city.iataCode})`)
+                   }}
+                   className="bg-white borde-2 border-gray-400 rounded-xl px-2"
+                >
+                  <Text className="text-gray-500 capitalize">{city.city} ({city.iataCode})</Text>
+                </Pressable>
+              ))}
+
+          </View>
         </View>
       </View>
        

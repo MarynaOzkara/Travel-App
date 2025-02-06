@@ -1,11 +1,13 @@
 import Header from '@/components/Header';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet,Text, View, ActivityIndicator, Pressable, TextInput } from 'react-native';
 import {ArrowPathRoundedSquareIcon, ChevronDoubleRightIcon} from 'react-native-heroicons/outline';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { router } from 'expo-router';
+import { router, useFocusEffect} from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 
@@ -32,7 +34,7 @@ interface DepatureDateProps {
   value: string;
   onPress: () => void;
 }
-interface FlightOfferData{
+export interface FlightOfferData{
     originLocationCode: string;
     destinationLocationCode: string;
     depatureDate: Date;
@@ -90,6 +92,8 @@ const TripOption: React.FC<TripOptionProps> = ({pageNavigation, handleNavigation
 
 export default function HomeScreen() {
   const [isPending, setIsPending] = useState(false);
+  const [refreshData, setRefreshData] = useState(true);
+  const [session, setSession] = useState(null);
   const [pageNavigation, setPageNavigation] = useState('oneWay');
   const [flightOfferData, setFlightOfferData] = useState<FlightOfferData>({
     originLocationCode: '',
@@ -105,9 +109,48 @@ export default function HomeScreen() {
     depatureDate: '',
     seat: 0
   })
-  const [selectedDate, setSelectedDate] = useState<any>(new Date())
-  const handleNavigationChange = (type: string)=> setPageNavigation(type)
-  
+  const [selectedDate, setSelectedDate] = useState<any>(new Date());
+
+  const handleNavigationChange = (type: string)=> setPageNavigation(type);
+  useEffect(() =>{
+    const loadSelectedDestination = async() =>{
+      try {
+        const depatureCities = await AsyncStorage.getItem('depatureCities');
+        const destinationCities = await AsyncStorage.getItem('destinationCities');
+        const depatureDate = await AsyncStorage.getItem('depatureDate');
+
+        if(depatureCities !== null){
+          const depatureCitiesArray = JSON.parse(depatureCities);
+          const lastAddedItem = depatureCitiesArray[depatureCitiesArray.length - 1];
+          setSearchFlightData((prev) => ({...prev, originCity: lastAddedItem.city}));
+          setFlightOfferData((prev) =>({...prev, originLocationCode: lastAddedItem.iataCode}))
+        }
+        if(destinationCities !== null){
+          const destinationCitiesArray = JSON.parse(destinationCities);
+          const lastAddedItem = destinationCitiesArray[destinationCitiesArray.length - 1];
+          setSearchFlightData((prev) => ({...prev, destinationCity: lastAddedItem.city}));
+          setFlightOfferData((prev) =>({...prev, destinationLocationCode: lastAddedItem.iataCode}))
+        }
+        if(depatureDate !== null){
+          setSelectedDate(depatureDate)
+          setSearchFlightData((prev) => ({...prev, depatureDate: depatureDate}));
+          // setFlightOfferData((prev) =>({...prev, depatureDate: depatureDate}))
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    loadSelectedDestination();
+    setRefreshData(false)
+  },[refreshData])
+  const handleBackFromPrevScreen = ()=>{
+    setRefreshData(true)
+  }
+ useFocusEffect(
+  useCallback(()=>{
+    handleBackFromPrevScreen()
+  },[session])
+ )
   return (
     <View className='flex-1 items-center bg-[#f5f7fa] relative'>
       <StatusBar style='light'/>
