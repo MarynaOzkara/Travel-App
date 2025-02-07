@@ -105,6 +105,7 @@ export default function HomeScreen() {
     adults: 0,
     maxResults: 10
   })
+  console.log(flightOfferData)
   const [searchFlightData, setSearchFlightData] = useState<SearchFlightData>({
     originCity: '',
     destinationCity: '',
@@ -112,7 +113,7 @@ export default function HomeScreen() {
     seat: 0
   })
   const [selectedDate, setSelectedDate] = useState<any>(new Date());
-
+//  console.log(selectedDate);
   const handleNavigationChange = (type: string)=> setPageNavigation(type);
   useEffect(() =>{
     const loadSelectedDestination = async() =>{
@@ -137,7 +138,7 @@ export default function HomeScreen() {
         if(depatureDate !== null){
           setSelectedDate(depatureDate)
           setSearchFlightData((prev) => ({...prev, depatureDate: depatureDate}));
-          // setFlightOfferData((prev) =>({...prev, depatureDate: depatureDate}))
+          setFlightOfferData((prev) =>({...prev, depatureDate: depatureDate}));
         }
       } catch (error) {
         console.log(error)
@@ -146,6 +147,7 @@ export default function HomeScreen() {
     loadSelectedDestination();
     setRefreshData(false)
   },[refreshData])
+  console.log(searchFlightData)
   const handleBackFromPrevScreen = ()=>{
     setRefreshData(true)
   }
@@ -162,11 +164,12 @@ export default function HomeScreen() {
      adults,
      maxResults
   } = flightOfferData;
-  const formatedDepatureDate = depatureDate.toISOString().split("T")[0];
+  
+  
   if(!originLocationCode || !destinationLocationCode || !depatureDate || !adults){
     Alert.alert("Error", "Please fill all the required fields!")
   }
-  const url =`https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${originLocationCode}&destinationLocationCode=${destinationLocationCode}&departureDate=${formatedDepatureDate}&adults=${adults}&max=${maxResults}`;
+  const url =`https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${originLocationCode}&destinationLocationCode=${destinationLocationCode}&departureDate=${depatureDate}&adults=${adults}&max=${maxResults}`;
   return url;
  }
  const handleSearch = async () => {
