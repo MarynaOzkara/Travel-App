@@ -35,6 +35,9 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
         <Stack.Screen name="depature"/>
+        <Stack.Screen name='destination'/>
+        <Stack.Screen name='depatureDate'/>
+        <Stack.Screen name='searchResult'/>
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

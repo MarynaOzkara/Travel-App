@@ -1,11 +1,11 @@
 import axios from "axios";
 
-export const apiToken = "e6pt0V0NUX9dYTYVy6sAOF8QWhSF";
+export const apiToken = "rzn4uDBUcfNLlzYySkJVxE6HRTSn";
 export const baseApiUrl =
   "https://test.api.amadeus.com/v2/shopping/flight-offers";
 
-const clientId = "ZoshXx6XyMnudRSRpta26DRgXyLMa9vY";
-const clientSecret = "z5FttCZrAC3qqIQ1";
+const clientId = "FmplkrKaxPxI9SPd04bmVRTfQAAjqYeU";
+const clientSecret = "oJlxqfPh4lz5KLEz";
 let newApiToken = "";
 
 const getNewAccessToken = async () => {

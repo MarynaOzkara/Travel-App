@@ -1,12 +1,14 @@
 import Header from '@/components/Header';
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet,Text, View, ActivityIndicator, Pressable, TextInput } from 'react-native';
+import { StyleSheet,Text, View, ActivityIndicator, Pressable, TextInput, Alert } from 'react-native';
 import {ArrowPathRoundedSquareIcon, ChevronDoubleRightIcon} from 'react-native-heroicons/outline';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router, useFocusEffect} from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { apiToken } from '@/utils/api';
 
 
 
@@ -118,6 +120,7 @@ export default function HomeScreen() {
         const depatureCities = await AsyncStorage.getItem('depatureCities');
         const destinationCities = await AsyncStorage.getItem('destinationCities');
         const depatureDate = await AsyncStorage.getItem('depatureDate');
+        //  console.log(depatureDate);
 
         if(depatureCities !== null){
           const depatureCitiesArray = JSON.parse(depatureCities);
@@ -151,6 +154,49 @@ export default function HomeScreen() {
     handleBackFromPrevScreen()
   },[session])
  )
+ const constractSearchUrl = ()=>{
+  const {
+     originLocationCode,
+     destinationLocationCode,
+     depatureDate,
+     adults,
+     maxResults
+  } = flightOfferData;
+  const formatedDepatureDate = depatureDate.toISOString().split("T")[0];
+  if(!originLocationCode || !destinationLocationCode || !depatureDate || !adults){
+    Alert.alert("Error", "Please fill all the required fields!")
+  }
+  const url =`https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${originLocationCode}&destinationLocationCode=${destinationLocationCode}&departureDate=${formatedDepatureDate}&adults=${adults}&max=${maxResults}`;
+  return url;
+ }
+ const handleSearch = async () => {
+  const searchUrl = constractSearchUrl();
+  setIsPending(true);
+  if(searchUrl){
+    try {
+    const response = await axios.get(searchUrl, {
+      headers: {
+        Authorization: `Bearer ${apiToken}`
+      }
+    })
+    if(response.data){
+      setIsPending(false);
+      await AsyncStorage.setItem("searchFlightData", JSON.stringify(searchFlightData));
+      router.push({
+        pathname:'/searchResult', 
+        params: {
+          flightOfferData: JSON.stringify(flightOfferData),
+        }
+    })
+    console.log(response.data)
+    }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  
+  
+ }
   return (
     <View className='flex-1 items-center bg-[#f5f7fa] relative'>
       <StatusBar style='light'/>
@@ -184,13 +230,13 @@ export default function HomeScreen() {
                   placeholder={searchFlightData.destinationCity ? searchFlightData.destinationCity : "Destination"} 
                   icon={<FontAwesome5 name="plane-arrival" size={20} color="gray" />} 
                   value={searchFlightData.destinationCity} 
-                  onPress={()=>{}}/>
+                  onPress={()=>router.push('/destination')}/>
             {/*Depature Date  */}
             <DepatureDate
-                placeholder={selectedDate && selectedDate.length > 0 ? selectedDate.replace(/^"|"$/g, "") : 'Depature Date'}
+                placeholder={searchFlightData.depatureDate  ? searchFlightData.depatureDate : 'Depature Date'}
                 icon={<FontAwesome5 name="calendar-alt" size={20} color="gray" />}
                 value={searchFlightData.depatureDate.replace(/^"|"$/g, "")}
-                onPress={() =>{}}
+                onPress={() =>router.push('/depatureDate')}
                 />
             {/* Seat */}
             <View className='border-2 border-gray-300 mx-4 rounded-2xl py-3 justify-center flex-row items-center pl-4'>
@@ -212,7 +258,7 @@ export default function HomeScreen() {
             </View>
             {/* Search Button */}
             <View className='w-full justify-start pt-2 px-4 mt-2'>
-              <Pressable onPress={()=>{}} className='bg-[#3182CE] rounded-lg justify-center items-center py-3'>
+              <Pressable onPress={handleSearch} className='bg-[#3182CE] rounded-lg justify-center items-center py-3'>
                 <Text className='text-white font-bold text-lg'>Search</Text>
               </Pressable>
             </View>
