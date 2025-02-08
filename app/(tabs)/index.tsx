@@ -102,18 +102,18 @@ export default function HomeScreen() {
     destinationLocationCode: '',
     depatureDate: new Date(),
     returnDate: new Date(),
-    adults: 0,
+    adults: 1,
     maxResults: 10
   })
-  console.log(flightOfferData)
+  
   const [searchFlightData, setSearchFlightData] = useState<SearchFlightData>({
     originCity: '',
     destinationCity: '',
     depatureDate: '',
-    seat: 0
+    seat: 1
   })
   const [selectedDate, setSelectedDate] = useState<any>(new Date());
-//  console.log(selectedDate);
+
   const handleNavigationChange = (type: string)=> setPageNavigation(type);
   useEffect(() =>{
     const loadSelectedDestination = async() =>{
@@ -121,7 +121,7 @@ export default function HomeScreen() {
         const depatureCities = await AsyncStorage.getItem('depatureCities');
         const destinationCities = await AsyncStorage.getItem('destinationCities');
         const depatureDate = await AsyncStorage.getItem('depatureDate');
-        //  console.log(depatureDate);
+        
 
         if(depatureCities !== null){
           const depatureCitiesArray = JSON.parse(depatureCities);
@@ -147,7 +147,7 @@ export default function HomeScreen() {
     loadSelectedDestination();
     setRefreshData(false)
   },[refreshData])
-  console.log(searchFlightData)
+ 
   const handleBackFromPrevScreen = ()=>{
     setRefreshData(true)
   }
@@ -188,10 +188,11 @@ export default function HomeScreen() {
       router.push({
         pathname:'/searchResult', 
         params: {
-          flightOfferData: JSON.stringify(flightOfferData),
+          flightOfferData: JSON.stringify(response.data),
         }
     })
-    console.log(response.data)
+    // console.log(response.data);
+    setIsPending(false);
     }
     } catch (error) {
       console.log(error)
