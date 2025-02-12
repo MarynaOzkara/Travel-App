@@ -9,12 +9,14 @@ import Ticket from '@/components/Ticket';
 const SearchResultScreen = () => {
   const params = useLocalSearchParams<any>();
   const {flightOfferData} = params;
-  const renderFlightOfferData = (item: any, index: number) =>{
+  const parsedFlightOfferData = JSON.parse(flightOfferData);
+  // console.log(parsedFlightOfferData.data)
+  const renderFlightOfferData = (item: any, index: number) =>(
     <Pressable key={index} onPress={()=>{}} className='mb-8'>
       <Ticket key={index} item={item}/>
     </Pressable>
-  }
-  console.log(flightOfferData)
+  )
+ 
   return (
     <View className="flex-1 items-center bg-[#f5f7fa]">
       <View className="w-full h-full">
@@ -42,22 +44,25 @@ const SearchResultScreen = () => {
            </View>
         </View>
 
-        <ScrollView className='w-full h-full'>
-          <View className='w-full py-2 justify-between items-center'>
+        <ScrollView className='w-full' contentContainerStyle={{
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <View className='w-full py-2 items-center justify-between'>
             <View>
               <View className='w-full px-6 py-2 flex-row justify-between items-center'>
                 <View>
                   <Text className='text-lg font-semibold'>Search Results</Text>
                 </View>
                 <View className='flex-row justify-center items-center'>
-                  <Text className='text-base font-semibold'>{flightOfferData?.data?.length} Results</Text>
+                  <Text className='text-base font-semibold'>{parsedFlightOfferData?.data?.length} Results</Text>
                   </View>
               </View>
             </View>
 
             <View className='w-full'>
-              <View className='w-full px-4 space-y-4'>
-                {flightOfferData?.data.map((item: any, index: any) =>renderFlightOfferData(item, index))}
+              <View className='w-full px-4'>
+                {parsedFlightOfferData?.data.map(renderFlightOfferData)}
               </View>
             </View>
           </View>
