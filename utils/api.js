@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const apiToken = "8NjLAtSjlV3uVNA1lDEy5Xqyzwjk";
+export const apiToken = "ICEDEfjhmXgXHsHLIsE2fZsiUR4Y";
 export const baseApiUrl =
   "https://test.api.amadeus.com/v2/shopping/flight-offers";
 

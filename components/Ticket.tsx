@@ -1,11 +1,13 @@
-import { View, Text } from 'react-native'
+import { View, Text, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 
+
 const Ticket = ({item}: any) => {
-  const [searchFlightData, setSearchFlightData] = useState<any>(null)
+  const [searchFlightData, setSearchFlightData] = useState<any>(null);
+  
   useEffect(()=>{
     const fetchSearchFlightData = async()=>{
       try {
@@ -56,8 +58,9 @@ return `${totalDurationHours} h ${totalDurationMinets} min`
       return '';
     }
  }
+ 
   // console.log(parsedSearchFlightData)
-  console.log(item)
+  // console.log(item)
   return (
     <View className='bg-white drop-shadow-sm bg-blend-darken mix-blend-hard-light w-full px-4 rounded-xl'>
 

@@ -38,6 +38,8 @@ export default function RootLayout() {
         <Stack.Screen name='destination'/>
         <Stack.Screen name='depatureDate'/>
         <Stack.Screen name='searchResult'/>
+        <Stack.Screen name='brandedupsell'/>
+        <Stack.Screen name='flightdetails'/>
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
