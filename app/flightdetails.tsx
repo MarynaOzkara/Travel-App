@@ -20,6 +20,27 @@ const FlightdetailsScreen = () => {
         }
         return date.toLocaleDateString("en-US", options)
     }
+    const formatTime = (time: string)=>{
+  
+      if(time){
+        const date = new Date(time);
+        return date.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      } else {
+        return '';
+      }
+   }
+   const calculateDurationFlightTime = (depatureTime, arrivalTime)=>{
+      const depature = new Date(depatureTime);
+      const arrival = new Date(arrivalTime);
+      const duration = arrival - depature;
+      const hours = Math.floor((duration) / (1000 * 60 * 60));
+      const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+
+      return `${hours}h ${minutes}min`
+   }
     console.log(flightOfferPrice)
   return (
     <View className='flex-1 items-center bg-[#f5f7fa]'>
@@ -100,8 +121,127 @@ const FlightdetailsScreen = () => {
                     </View>
                     </View>
 
-                    
+                    <View className='w-2/4 h-full justify-between'>
+                       <View>
+                          <Text className='font-bold text-base'>
+                            {formatTime(parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[0]?.departure.at)}
+                          </Text>
+                          <Text className='text-base font-medium capitalize'>
+                            {parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[0]?.departure.iataCode} Airport
+                          </Text>
+                       </View>
+
+                       <View>
+                          <Text className='font-bold text-base text-gray-500'>
+                            {formatTime(parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[0]?.businessName)} Airlines
+                          </Text>
+                          <Text className='font-bold text-base text-gray-500'>
+                            {parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[0]?.co2Emissions[0]?.cabin} M Class
+                          </Text>
+                       </View>
+
+                       <View>
+                          <Text className='font-bold text-base'>
+                            {formatTime(parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[0]?.arrival.at)}
+                          </Text>
+                          <Text className='text-base font-medium capitalize'>
+                            {parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[0]?.arrival.iataCode} Airport
+                          </Text>
+                       </View>
+                    </View>
+                    <View className='w-1/4 h-full justify-between'>
+                      <View>
+                        <Text className='text-base font-bold text-right'>
+                          {parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[0]?.carrierCode}
+                        </Text>
+                      </View>
+                      <View>
+                        <Text className='text-base font-bold text-right'>
+                          {calculateDurationFlightTime(parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[0]?.departure.at, parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[0]?.arrival.at)}
+                        </Text>
+                      </View>
+                    </View>
                 </View>
+
+                {/* Layover */}
+                {parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments?.length > 1 ? (
+                  <View className='flex-row w-full justify-between'>
+                     <Text className='text-base font-semibold'>Layover</Text>
+                     <Text>
+                     {parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[0]?.arrival?.iataCode}
+                     </Text>
+                  </View>
+                ) : null}
+                {parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments?.length > 1 ? (
+                  <View className='py-2 flex-row justify-between items-start my-4 bg-white h-64 drop-shadow-sm px-4'>
+                  <View className='w-1/4 justify-between h-full flex-row'>
+                      <View className='h-full justify-between w-3/4 items-end'>
+                         <View>
+                             <Text className='text-gray-500 font-bold text-base text-right'>
+                              {formatedDate(parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[1]?.departure.at) }
+                             </Text>
+                         </View>
+                         <View>
+                             <Text className='text-gray-500 font-bold text-base text-right'>
+                              {formatedDate(parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[1]?.arrival.at) }
+                             </Text>
+                         </View>
+                      </View>
+
+                      <View className='w-1/4 justify-center items-center'>
+                     <View>
+                         <Octicons name='dot-fill' size={24} color="red"/>
+                     </View>
+                     <View className='border-l-2 border-red-600 h-[70%]'></View>
+                     <View>
+                         <Octicons name='dot-fill' size={24} color="red"/>
+                     </View>
+                     <View className='border-l-2 border-red-600 h-[10%]'></View>
+                  </View>
+                  </View>
+
+                  <View className='w-2/4 h-full justify-between'>
+                     <View>
+                        <Text className='font-bold text-base'>
+                          {formatTime(parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[1]?.departure.at)}
+                        </Text>
+                        <Text className='text-base font-medium capitalize'>
+                          {parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[1]?.departure.iataCode} Airport
+                        </Text>
+                     </View>
+
+                     <View>
+                        <Text className='font-bold text-base text-gray-500'>
+                          {formatTime(parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[1]?.businessName)} Airlines
+                        </Text>
+                        <Text className='font-bold text-base text-gray-500'>
+                          {parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[1]?.co2Emissions[0]?.cabin} M Class
+                        </Text>
+                     </View>
+
+                     <View>
+                        <Text className='font-bold text-base'>
+                          {formatTime(parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[1]?.arrival.at)}
+                        </Text>
+                        <Text className='text-base font-medium capitalize'>
+                          {parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[1]?.arrival.iataCode} Airport
+                        </Text>
+                     </View>
+                  </View>
+                  <View className='w-1/4 h-full justify-between'>
+                    <View>
+                      <Text className='text-base font-bold text-right'>
+                        {parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[1]?.carrierCode}
+                      </Text>
+                    </View>
+                    <View>
+                      <Text className='text-base font-bold text-right'>
+                        {calculateDurationFlightTime(parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[1]?.departure.at, parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[1]?.arrival.at)}
+                      </Text>
+                    </View>
+                  </View>
+              </View>
+                ) : null}
             </View>
            </ScrollView>
       </View>

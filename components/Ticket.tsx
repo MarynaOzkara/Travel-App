@@ -46,7 +46,7 @@ fetchSearchFlightData()
   const totalDurationMinets = Math.floor((totalDurationMs % (1000 * 60 * 60)) / (1000 * 60))  
 return `${totalDurationHours} h ${totalDurationMinets} min`
   }
- const formatTime = (time: string)=>{
+  const formatTime = (time: string)=>{
   
     if(time){
       const date = new Date(time);
