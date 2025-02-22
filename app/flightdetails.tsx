@@ -41,6 +41,20 @@ const FlightdetailsScreen = () => {
 
       return `${hours}h ${minutes}min`
    }
+   const calculateTripDuration = (segments: any)=>{
+    let totalDurationMs = 0;
+    for(let i=0; i < segments.length; i++ ){
+      const depatureTime = new Date(segments[i].departure.at);
+      const arrivalTime = new Date(segments[i].arrival.at);
+      const segmentsDuratinMs = arrivalTime - depatureTime;
+      totalDurationMs += segmentsDuratinMs;
+
+      const totalDurationHours = Math.floor(totalDurationMs / (1000 * 60 * 60));
+      const totalDurationMinutes = Math.floor((totalDurationMs % (1000 * 60 * 60)) / (1000 * 60));
+
+      return `${totalDurationHours}h ${totalDurationMinutes}min`
+    }
+   }
     console.log(flightOfferPrice)
   return (
     <View className='flex-1 items-center bg-[#f5f7fa]'>
@@ -168,10 +182,11 @@ const FlightdetailsScreen = () => {
                   <View className='flex-row w-full justify-between'>
                      <Text className='text-base font-semibold'>Layover</Text>
                      <Text>
-                     {parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[0]?.arrival?.iataCode}
+                     {parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments[0]?.arrival?.iataCode} Airport
                      </Text>
                   </View>
                 ) : null}
+                {/* Second Flight Details */}
                 {parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments?.length > 1 ? (
                   <View className='py-2 flex-row justify-between items-start my-4 bg-white h-64 drop-shadow-sm px-4'>
                   <View className='w-1/4 justify-between h-full flex-row'>
@@ -194,7 +209,7 @@ const FlightdetailsScreen = () => {
                      </View>
                      <View className='border-l-2 border-red-600 h-[70%]'></View>
                      <View>
-                         <Octicons name='dot-fill' size={24} color="red"/>
+                         <Octicons name='dot' size={24} color="red"/>
                      </View>
                      <View className='border-l-2 border-red-600 h-[10%]'></View>
                   </View>
@@ -242,6 +257,29 @@ const FlightdetailsScreen = () => {
                   </View>
               </View>
                 ) : null}
+
+                {/* Trip Total */}
+                <View className='flex-row w-full justify-between py-8'>
+                  <Text className='text-lg font-semibold'>Trip Total</Text>
+                  <Text className='text-lg font-semibold'>
+                    {calculateTripDuration(parsedFlightOfferPrice?.flightOffers[0]?.itineraries[0]?.segments)}
+                  </Text>
+                </View>
+            </View>
+            <View className='flex-row w-full justify-between bg-[#192031] py-4 px-4 items-center'>
+              <Text className='text-white text-lg font-semibold'>
+              {parsedFlightOfferPrice?.flightOffers[0]?.price?.currency === 'EUR' ? "€" : "$"}{' '}{Math.round(parsedFlightOfferPrice?.flightOffers[0]?.price?.total)}
+              </Text>
+              <Pressable 
+                 onPress={()=>router.push({
+                  pathname: '/travelerdetails',
+                  params: {
+                    FlightOfferPrice: JSON.stringify(parsedFlightOfferPrice)
+                  }
+                 })} 
+                 className='bg-[#3182CE] rounded-full px-8 py-2 items-center justify-center'>
+                   <Text className='text-white text-sm font-semibold'>Continue Booking</Text>
+              </Pressable>
             </View>
            </ScrollView>
       </View>

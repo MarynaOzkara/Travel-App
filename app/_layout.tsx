@@ -40,6 +40,7 @@ export default function RootLayout() {
         <Stack.Screen name='searchResult'/>
         <Stack.Screen name='brandedupsell'/>
         <Stack.Screen name='flightdetails'/>
+        <Stack.Screen name='travelerdetails'/>
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
